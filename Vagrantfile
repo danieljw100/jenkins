@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   MASTER = "master" # specifiy the hostname of the master
   MASTER_IP = "172.28.128.6" # specify the fixed IP address of the master
   #NB: in this project the nodes IPs are made up of the master ip concatenated with the node index (1,2,...)
-  NODES = ['node01', 'node02', 'repo'] # specify the hostnames of the nodes
+  NODES = [] # specify the hostnames of the nodes
   SYNCEDALLVMS = "/vagrant/synced/allvms" # vm location of the synced folder shared by all vms
   SYNCEDTHISVM = "/vagrant/synced/thisvm" # vm location of the machine specific sycned folder
   SSH_USER = "xmen" # define the user that will be authorised to ssh between all vms
@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: "synced_folders.sh", args: ["#{SYNCEDALLVMS}", "#{SYNCEDTHISVM}"]
   config.vm.provision "shell", path: "set_hosts.sh" # NB: this needs refactoring - currently uses hard-coded hostnames and IPs
   config.vm.provision "shell", path: "create_ssh_user.sh", args: ["#{SSH_USER}", "/home/#{SSH_USER}"]
-  # config.vm.provision "shell", path: "install_git.sh", args: ["#{GIT_USER}", "#{GIT_EMAIL}", "#{SYNCEDTHISVM}", "#{MASTER_IP}"]
+  config.vm.provision "shell", path: "install_git.sh", args: ["#{GIT_USER}", "#{GIT_EMAIL}", "#{SYNCEDTHISVM}", "#{MASTER_IP}"]
 
 
   # **************
@@ -52,6 +52,7 @@ Vagrant.configure("2") do |config|
     ma.vm.provision "shell", path: "make_user_keys.sh", args: ["#{SSH_USER}", "#{SYNCEDALLVMS}"]
     ma.vm.provision "shell", path: "make_host_keys.sh", args: ["#{SYNCEDALLVMS}", "#{MASTER}", "#{MASTER_IP}", "#{nodesbash}"]
     ma.vm.provision "shell", path: "import_ssh_directory.sh", args: ["#{SYNCEDALLVMS}/.ssh", "#{SSH_USER}"]
+    ma.vm.provision "shell", path: "install_jenkins.sh"
     # ma.vm.provision "shell", path: "install_puppet.sh", args: ["#{PUPPET_DIR}"]
     # ma.vm.provision "shell", path: "get_etcd_installation_files.sh", args: ["#{SYNCEDALLVMS}"]
     # ma.vm.provision "shell", path: "get_kubernetes_installation_files.sh", args: ["#{SYNCEDALLVMS}"]
