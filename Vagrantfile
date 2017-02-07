@@ -52,6 +52,8 @@ Vagrant.configure("2") do |config|
     ma.vm.provision "shell", path: "make_user_keys.sh", args: ["#{SSH_USER}", "#{SYNCEDALLVMS}"]
     ma.vm.provision "shell", path: "make_host_keys.sh", args: ["#{SYNCEDALLVMS}", "#{MASTER}", "#{MASTER_IP}", "#{nodesbash}"]
     ma.vm.provision "shell", path: "import_ssh_directory.sh", args: ["#{SYNCEDALLVMS}/.ssh", "#{SSH_USER}"]
+    ma.vm.provision "shell", path: "install_jdk.sh"
+    ma.vm.provision "shell", path: "install_maven2.sh"
     ma.vm.provision "shell", path: "install_jenkins.sh"
     # ma.vm.provision "shell", path: "install_puppet.sh", args: ["#{PUPPET_DIR}"]
     # ma.vm.provision "shell", path: "get_etcd_installation_files.sh", args: ["#{SYNCEDALLVMS}"]
