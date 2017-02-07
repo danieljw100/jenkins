@@ -1,5 +1,7 @@
+#ignore everything under these directories
 /.vagrant/
-#ignore everything under directories: all, master nodeXX
 /all/
+/JENKINS_BASE/
+/JENKINS_HOME/
 /master/
 /node??/

@@ -4,7 +4,8 @@
 # https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu
 
 echo "**********************************************************************"
-echo "install_maven2.sh"
+echo "install_maven.sh"
 
 sudo apt-get update
-sudo apt-get -y install maven2
+sudo apt-get -y install maven
+#sudo apt-get -y install maven2

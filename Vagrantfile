@@ -12,6 +12,8 @@ Vagrant.configure("2") do |config|
   MASTER_IP = "172.28.128.6" # specify the fixed IP address of the master
   #NB: in this project the nodes IPs are made up of the master ip concatenated with the node index (1,2,...)
   NODES = [] # specify the hostnames of the nodes
+  JENKINS_BASE = "/usr/share/jenkins" # vm location of jenkins.war file
+  JENKINS_HOME = "/var/lib/jenkins" # vm location
   SYNCEDALLVMS = "/vagrant/synced/allvms" # vm location of the synced folder shared by all vms
   SYNCEDTHISVM = "/vagrant/synced/thisvm" # vm location of the machine specific sycned folder
   SSH_USER = "xmen" # define the user that will be authorised to ssh between all vms
@@ -40,9 +42,14 @@ Vagrant.configure("2") do |config|
   config.vm.define "#{MASTER}" do |ma|
     ma.vm.provider "virtualbox" do |vb|
       vb.name = "#{MASTER}"
+      vb.memory = 4096
+      vb.cpus = 2
     end
     ma.vm.network "private_network", ip: "#{MASTER_IP}"
-    ma.vm.synced_folder "./master", "#{SYNCEDTHISVM}", :create => true      # create HOST dir (if reqd)
+    ma.vm.synced_folder "./master", "#{SYNCEDTHISVM}", :create => true            # create HOST dir (if reqd)
+    ma.vm.synced_folder "./JENKINS_BASE", "#{JENKINS_BASE}", :create => true      # create HOST dir (if reqd)    
+    ma.vm.synced_folder "./JENKINS_HOME", "#{JENKINS_HOME}", :create => true      # create HOST dir (if reqd)
+    ma.vm.provision "shell", path: "synced_folders.sh", args: ["#{JENKINS_BASE}", "#{JENKINS_HOME}"]
     ma.vm.provision "shell", path: "set_hostname.sh", args: ["#{MASTER}"]
     #Convert NODES (ruby array) into nodesbash (bash array) so it can be passed to the shell provisioner
     nodesbash = " "
@@ -53,7 +60,7 @@ Vagrant.configure("2") do |config|
     ma.vm.provision "shell", path: "make_host_keys.sh", args: ["#{SYNCEDALLVMS}", "#{MASTER}", "#{MASTER_IP}", "#{nodesbash}"]
     ma.vm.provision "shell", path: "import_ssh_directory.sh", args: ["#{SYNCEDALLVMS}/.ssh", "#{SSH_USER}"]
     ma.vm.provision "shell", path: "install_jdk.sh"
-    ma.vm.provision "shell", path: "install_maven2.sh"
+    ma.vm.provision "shell", path: "install_maven.sh"
     ma.vm.provision "shell", path: "install_jenkins.sh"
     # ma.vm.provision "shell", path: "install_puppet.sh", args: ["#{PUPPET_DIR}"]
     # ma.vm.provision "shell", path: "get_etcd_installation_files.sh", args: ["#{SYNCEDALLVMS}"]
